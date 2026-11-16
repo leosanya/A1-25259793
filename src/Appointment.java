@@ -5,12 +5,33 @@ public class Appointment implements Comparable<Appointment> {
     private int hour;
     private int minute;
 
-    /** Creates an appointment after the manager has checked its details. */
-    public Appointment(Patient patient, HealthProfessional professional, int hour, int minute) {
+    private Appointment(Patient patient, HealthProfessional professional, int hour, int minute) {
         this.patient = patient;
         this.professional = professional;
         this.hour = hour;
         this.minute = minute;
+    }
+
+    /**
+     * Creates an appointment only when all required details and the time slot are valid.
+     *
+     * @return a valid appointment, or null when the supplied details are invalid
+     */
+    public static Appointment createIfValid(Patient patient, HealthProfessional professional,
+            int hour, int minute) {
+        if (patient == null || professional == null) {
+            return null;
+        }
+        if (patient.getName() == null || patient.getName().trim().length() == 0) {
+            return null;
+        }
+        if (patient.getMobilePhone() == null || patient.getMobilePhone().trim().length() == 0) {
+            return null;
+        }
+        if (hour < 8 || hour >= 16 || (minute != 0 && minute != 30)) {
+            return null;
+        }
+        return new Appointment(patient, professional, hour, minute);
     }
 
     /** @return the patient linked to the appointment */
@@ -36,7 +57,7 @@ public class Appointment implements Comparable<Appointment> {
     /** @return the time in HH:mm format */
     public String getTime() {
         String hourText = hour < 10 ? "0" + hour : "" + hour;
-        String minuteText = minute == 0 ? "00" : "30";
+        String minuteText = minute < 10 ? "0" + minute : "" + minute;
         return hourText + ":" + minuteText;
     }
 

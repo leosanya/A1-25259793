@@ -31,7 +31,10 @@ public class AppointmentManager {
             }
         }
 
-        Appointment appointment = new Appointment(patient, professional, hour, minute);
+        Appointment appointment = Appointment.createIfValid(patient, professional, hour, minute);
+        if (appointment == null) {
+            return "Warning: the appointment could not be created from the supplied details.";
+        }
         appointments.add(appointment);
         return "Appointment added for " + patient.getName() + " at " + appointment.getTime() + ".";
     }
